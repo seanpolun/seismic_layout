@@ -7,21 +7,24 @@ class ShootParams():
     def __init__(self):
         self.shot_spacing = 10
         self.phone_spacing = 2
-        line_length = 1500
+        line_length = 2020
         self.num_16_strings = 2
         self.num_24_strings = 4
         self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
         self.tot_num_strings = self.num_16_strings + self.num_24_strings
-        self.first_phone_pos = 36
+        self.first_phone_pos = 44
+        self.annotation_spacing = 10
         strings_24 = np.ones(self.num_24_strings) * 24
         strings_16 = np.ones(self.num_16_strings) * 16
         self.init_string_layout = np.concatenate([strings_24, strings_16])
         self.init_string_pos = np.empty_like(self.init_string_layout)
+        str_geom = np.cumsum(self.init_string_layout)
         phone_pos = self.first_phone_pos
         for i, str_num in np.ndenumerate(self.init_string_layout):
             self.init_string_pos[i] = phone_pos
             phone_pos = phone_pos + (str_num * self.phone_spacing)
-        relative_str_pos = self.init_string_pos / self.init_string_pos[-1]
+        relative_str_pos = str_geom / str_geom[-1]
+        self.annotation_dist = np.arange(0, line_length, self.annotation_spacing)
 
 
 
@@ -34,8 +37,9 @@ class ShootParams():
         initial_roll_length = self.string_aperture + self.first_phone_pos
         rolled_length = line_length - initial_roll_length
         total_rolls = rolled_length / self.string_aperture
+        roll_rem = total_rolls - math.floor(total_rolls)
         total_rolls_all = math.floor(total_rolls) + 1
-        id_last_roll = np.abs(relative_str_pos - total_rolls).argmin()
+        id_last_roll = np.abs(relative_str_pos - roll_rem).argmin() + 1
         rolls = np.ones_like(relative_str_pos)
         rolls = rolls * total_rolls_all
         for i in range(id_last_roll):
@@ -44,7 +48,7 @@ class ShootParams():
         self.num_rolls = np.sum(rolls) - self.tot_num_strings
         rolled_length = np.sum(rolls * self.init_string_layout * self.phone_spacing) - self.string_aperture
         self.true_length = rolled_length + self.first_phone_pos + self.string_aperture
-
+        self.annotation_dist = np.arange(0, self.true_length, self.annotation_spacing)
         self.rolled_length = rolled_length
         self.num_shots = math.ceil((rolled_length + self.first_phone_pos) / self.shot_spacing)
 
@@ -89,6 +93,14 @@ def main():
     ax.axes.yaxis.set_ticklabels([])
     ax.set_frame_on(False)
 
+    # Dist Annotation
+    dist_annot = params.annotation_dist
+    dist_x = np.mod(dist_annot, plot_x_max)
+    dist_y = plot_y_max - np.floor(dist_annot / plot_x_max)
+    for i, annot in enumerate(dist_annot):
+        ax.annotate("{:.1f}".format(annot), (dist_x[i], dist_y[i]), textcoords="offset points", xytext=(0, 20),
+                    horizontalalignment="center", color="k", arrowprops={'arrowstyle': '-'})
+
     shot_end = params.num_shots * params.shot_spacing
     shot_dist = np.arange(0, shot_end, params.shot_spacing)
     shot_x = np.mod(shot_dist, plot_x_max)
@@ -104,8 +116,8 @@ def main():
     for i, shot in enumerate(shot_dist_annot):
         ax.annotate("{:.0f}".format(shot), (shot_x_annot[i],shot_y_annot[i]), textcoords="offset points", xytext=(0, 10),
                     horizontalalignment="center", color="r")
-        ax.annotate("{:.1f}".format((shot - 1)*params.shot_spacing), (shot_x_annot[i], shot_y_annot[i]),
-                    textcoords="offset points", xytext=(0, 20), horizontalalignment="center", color="k")
+        # ax.annotate("{:.1f}".format((shot - 1)*params.shot_spacing), (shot_x_annot[i], shot_y_annot[i]),
+        #             textcoords="offset points", xytext=(0, 20), horizontalalignment="center", color="k")
 
     num_strings = params.tot_num_strings
     colors = ["deeppink", "lime", "blue", "orange", "white", "yellow"]
@@ -122,6 +134,14 @@ def main():
         ph_x = np.mod(ph_dist, plot_x_max)
         ph_y = plot_y_max - np.floor(ph_dist / plot_x_max) - 0.25
         ax.scatter(ph_x, ph_y, c=str_color, marker="v", edgecolor="k", linewidths=0.5)
+
+    # Dist Annotation
+    dist_annot = params.annotation_dist
+    dist_x = np.mod(dist_annot, plot_x_max)
+    dist_y = plot_y_max - np.floor(dist_annot / plot_x_max)
+    for i, annot in enumerate(dist_annot):
+        ax.annotate("{:.1f}".format(annot), (dist_x[i], dist_y[i]), textcoords="offset points", xytext=(0, 20),
+                    horizontalalignment="center", color="k")
 
 
     ax.grid()
