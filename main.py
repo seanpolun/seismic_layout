@@ -147,7 +147,7 @@ def main():
     ax.grid()
     ax.set_axisbelow(True)
     plt.show()
-    fig.savefig("out.pdf")
+    fig.savefig("reflection.pdf")
 
 
 if __name__ == '__main__':
