@@ -1,22 +1,30 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import json
+import pandas as pd
+import os
 
 
 class ShootParams():
-    def __init__(self):
-        self.shot_spacing = 10
-        self.phone_spacing = 2
-        line_length = 2020
-        self.num_16_strings = 2
-        self.num_24_strings = 4
-        self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
-        self.tot_num_strings = self.num_16_strings + self.num_24_strings
-        self.first_phone_pos = 44
-        self.annotation_spacing = 10
-        strings_24 = np.ones(self.num_24_strings) * 24
-        strings_16 = np.ones(self.num_16_strings) * 16
-        self.init_string_layout = np.concatenate([strings_24, strings_16])
+    def __init__(self, input_dict):
+        self.shot_spacing = input_dict['shot_spacing']
+        self.phone_spacing = input_dict['phone_spacing']
+        line_length = input_dict['line_length']
+        self.line_inventory = pd.read_csv(input_dict['line_inventory'], skipinitialspace=True)
+        # self.num_16_strings = 2
+        # self.num_24_strings = 4
+        # self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
+        # self.tot_num_strings = self.num_16_strings + self.num_24_strings
+        self.phone_list = self.line_inventory.iloc[:, 2]
+        self.total_phone_inv = self.phone_list.sum()
+        self.tot_num_strings = len(self.line_inventory.index)
+        self.first_phone_pos = input_dict['first_phone_position']
+        self.annotation_spacing = input_dict['annotation_spacing']
+        # strings_24 = np.ones(self.num_24_strings) * 24
+        # strings_16 = np.ones(self.num_16_strings) * 16
+        # self.init_string_layout = np.concatenate([strings_24, strings_16])
+        self.init_string_layout = self.phone_list.to_numpy()
         self.init_string_pos = np.empty_like(self.init_string_layout)
         str_geom = np.cumsum(self.init_string_layout)
         phone_pos = self.first_phone_pos
@@ -26,10 +34,6 @@ class ShootParams():
         relative_str_pos = str_geom / str_geom[-1]
         self.annotation_dist = np.arange(0, line_length, self.annotation_spacing)
 
-
-
-        string_16_len = 16 * self.phone_spacing
-        string_24_len = 24 * self.phone_spacing
         self.lead_shots = math.floor(self.first_phone_pos / self.shot_spacing)
         self.string_aperture = self.total_phone_inv * self.phone_spacing
         self.lead_shot_len = self.lead_shots * self.shot_spacing
@@ -66,8 +70,12 @@ class GeophoneString():
             string_pos = np.concatenate([string_pos, new_string_pos])
         self.string_pos = string_pos
 
-def main():
-    params = ShootParams()
+
+def main(json_input):
+    with open(json_input) as in_file:
+        input_json = json.load(in_file)
+    inputs = input_json['input_data'][0]
+    params = ShootParams(inputs)
     print(params.num_rolls)
     print(params.num_shots)
     page_x = 17 # inches
@@ -126,7 +134,8 @@ def main():
         num_phones = params.init_string_layout[string]
         first_phone_pos = params.init_string_pos[string]
         roll = params.rolls[string]
-        str_color = colors[string]
+        # str_color = colors[string]
+        str_color = params.line_inventory.iloc[string, 1]
         str_obj = GeophoneString(num_phones, first_phone_pos, str_color, roll,params)
         strings[string] = str_obj
 
@@ -151,6 +160,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    json_file = "./reflection.json"
+    main(json_file)
 
 
