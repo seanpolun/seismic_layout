@@ -4,11 +4,11 @@ import math
 
 class ShootParams():
     def __init__(self):
-        self.shot_spacing = 4
-        self.num_shots_side = 8
-        self.phone_spacing = 6
+        self.shot_spacing = 6
+        self.phone_spacing = 2
         self.num_16_strings = 2
         self.num_24_strings = 4
+        self.lead_shots = 2
         self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
         self.tot_num_strings = self.num_16_strings + self.num_24_strings
         self.annotation_spacing = 10
@@ -17,7 +17,7 @@ class ShootParams():
         self.init_string_layout = np.concatenate([strings_24, strings_16])
         self.init_string_pos = np.empty_like(self.init_string_layout)
         str_geom = np.cumsum(self.init_string_layout)
-        self.lead_shot_len = self.num_shots_side * self.shot_spacing
+        self.lead_shot_len = self.lead_shots * self.shot_spacing
         self.first_phone_pos = self.lead_shot_len
         phone_pos = self.first_phone_pos
         for i, str_num in np.ndenumerate(self.init_string_layout):
@@ -25,8 +25,7 @@ class ShootParams():
             phone_pos = phone_pos + (str_num * self.phone_spacing)
 
         self.string_aperture = self.total_phone_inv * self.phone_spacing
-
-        self.num_shots = 2 * self.num_shots_side
+        self.num_shots = math.floor(self.string_aperture / self.shot_spacing) + (2 * self.lead_shots)
         self.line_length = self.string_aperture + (2 * self.first_phone_pos)
         self.annotation_dist = np.arange(0,self.line_length, self.annotation_spacing)
 
@@ -65,12 +64,7 @@ def main():
                     horizontalalignment="center", color="k", arrowprops={'arrowstyle': '-'})
 
     # Plot shots
-    shot_end1 = params.num_shots_side * params.shot_spacing
-    shot_start2 = params.string_aperture + params.first_phone_pos
-    shot_end2 = shot_start2 + shot_end1
-    shot_dist1 = np.arange(0, shot_end1, params.shot_spacing)
-    shot_dist2 = np.arange(shot_start2, shot_end2, params.shot_spacing)
-    shot_dist = np.concatenate([shot_dist1, shot_dist2])
+    shot_dist = np.arange(0, (params.string_aperture + (2 * params.lead_shot_len)), params.shot_spacing)
     shot_x = np.mod(shot_dist, plot_x_max)
     shot_y = plot_y_max - np.floor(shot_dist / plot_x_max)
     shot_annot_subsample = 1
