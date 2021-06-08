@@ -78,8 +78,8 @@ def main(json_input):
     params = ShootParams(inputs)
     print(params.num_rolls)
     print(params.num_shots)
-    page_x = 17 # inches
-    page_y = 11 # inches
+    page_x = 11 # inches
+    page_y = 8.5 # inches
     x_scale = 1 / 12 # inch per m
     x_spacing = 2
     page_margin = 0.5 # inches

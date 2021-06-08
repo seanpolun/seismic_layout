@@ -9,6 +9,7 @@ class ShootParams():
         self.num_16_strings = 2
         self.num_24_strings = 4
         self.lead_shots = 2
+        self.line_offset = 162 # to align with reflection line
         self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
         self.tot_num_strings = self.num_16_strings + self.num_24_strings
         self.annotation_spacing = 10
@@ -27,13 +28,13 @@ class ShootParams():
         self.string_aperture = self.total_phone_inv * self.phone_spacing
         self.num_shots = math.floor(self.string_aperture / self.shot_spacing) + (2 * self.lead_shots)
         self.line_length = self.string_aperture + (2 * self.first_phone_pos)
-        self.annotation_dist = np.arange(0,self.line_length, self.annotation_spacing)
+        self.annotation_dist = np.arange(0,self.line_length, self.annotation_spacing) + self.line_offset
 
 def main():
     params = ShootParams()
     print(params.num_shots)
-    page_x = 17 # inches
-    page_y = 11 # inches
+    page_x = 11 # inches
+    page_y = 8.5 # inches
     x_scale = 1 / 12 # inch per m
     x_spacing = 2
     page_margin = 0.5 # inches
@@ -64,7 +65,8 @@ def main():
                     horizontalalignment="center", color="k", arrowprops={'arrowstyle': '-'})
 
     # Plot shots
-    shot_dist = np.arange(0, (params.string_aperture + (2 * params.lead_shot_len)), params.shot_spacing)
+    shot_dist = np.arange(0, (params.string_aperture + (2 * params.lead_shot_len)), params.shot_spacing) + \
+                params.line_offset
     shot_x = np.mod(shot_dist, plot_x_max)
     shot_y = plot_y_max - np.floor(shot_dist / plot_x_max)
     shot_annot_subsample = 1
@@ -78,8 +80,9 @@ def main():
     for i, shot in enumerate(shot_dist_annot):
         ax.annotate("{:.0f}".format(shot), (shot_x_annot[i],shot_y_annot[i]), textcoords="offset points", xytext=(0, 10),
                     horizontalalignment="center", color="r")
-        # ax.annotate("{:.1f}".format((shot - 1)*params.shot_spacing), (shot_x_annot[i], shot_y_annot[i]),
-        #             textcoords="offset points", xytext=(0, 20), horizontalalignment="center", color="k")
+        if params.line_offset != 0:
+            ax.annotate("{:.0f}".format(i + 1), (shot_x_annot[i], shot_y_annot[i]),
+                        textcoords="offset points", xytext=(0, 30), horizontalalignment="center", color="b")
 
     num_strings = params.tot_num_strings
     colors = ["deeppink", "lime", "blue", "orange", "white", "yellow"]
@@ -89,7 +92,8 @@ def main():
         first_phone_pos = params.init_string_pos[string]
         str_color = colors[string]
 
-        ph_dist = np.arange(first_phone_pos, (first_phone_pos + ph_spacing * num_phones), ph_spacing)
+        ph_dist = np.arange(first_phone_pos, (first_phone_pos + ph_spacing * num_phones), ph_spacing) + \
+                  params.line_offset
         ph_x = np.mod(ph_dist, plot_x_max)
         ph_y = plot_y_max - np.floor(ph_dist / plot_x_max) - 0.25
         ax.scatter(ph_x, ph_y, c=str_color, marker="v", edgecolor="k", linewidths=0.5)
