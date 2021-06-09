@@ -1,21 +1,36 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import pandas as pd
+import json
 
 class ShootParams():
-    def __init__(self):
-        self.shot_spacing = 6
-        self.phone_spacing = 2
-        self.num_16_strings = 2
-        self.num_24_strings = 4
-        self.lead_shots = 2
-        self.line_offset = 162 # to align with reflection line
-        self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
-        self.tot_num_strings = self.num_16_strings + self.num_24_strings
-        self.annotation_spacing = 10
-        strings_24 = np.ones(self.num_24_strings) * 24
-        strings_16 = np.ones(self.num_16_strings) * 16
-        self.init_string_layout = np.concatenate([strings_24, strings_16])
+    def __init__(self, input_dict):
+        # self.shot_spacing = 6
+        # self.phone_spacing = 2
+        # self.num_16_strings = 2
+        # self.num_24_strings = 4
+        # self.lead_shots = 2
+        # self.line_offset = 162 # to align with reflection line
+        # self.total_phone_inv = (self.num_24_strings * 24) + (self.num_16_strings * 16)
+        # self.tot_num_strings = self.num_16_strings + self.num_24_strings
+        # self.annotation_spacing = 10
+        # strings_24 = np.ones(self.num_24_strings) * 24
+        # strings_16 = np.ones(self.num_16_strings) * 16
+        # self.init_string_layout = np.concatenate([strings_24, strings_16])
+        # self.init_string_pos = np.empty_like(self.init_string_layout)
+        self.lead_shots = input_dict['lead_shots']
+        self.line_offset = input_dict['line_offset']
+        self.shot_spacing = input_dict['shot_spacing']
+        self.phone_spacing = input_dict['phone_spacing']
+        # line_length = input_dict['line_length']
+        self.line_inventory = pd.read_csv(input_dict['line_inventory'], skipinitialspace=True)
+        self.phone_list = self.line_inventory.iloc[:, 2]
+        self.total_phone_inv = self.phone_list.sum()
+        self.tot_num_strings = len(self.line_inventory.index)
+        # self.first_phone_pos = input_dict['first_phone_position']
+        self.annotation_spacing = input_dict['annotation_spacing']
+        self.init_string_layout = self.phone_list.to_numpy()
         self.init_string_pos = np.empty_like(self.init_string_layout)
         str_geom = np.cumsum(self.init_string_layout)
         self.lead_shot_len = self.lead_shots * self.shot_spacing
@@ -30,8 +45,12 @@ class ShootParams():
         self.line_length = self.string_aperture + (2 * self.first_phone_pos)
         self.annotation_dist = np.arange(0,self.line_length, self.annotation_spacing) + self.line_offset
 
-def main():
-    params = ShootParams()
+
+def main(json_input):
+    with open(json_input) as in_file:
+        input_json = json.load(in_file)
+    inputs = input_json['input_data'][0]
+    params = ShootParams(inputs)
     print(params.num_shots)
     page_x = 11 # inches
     page_y = 8.5 # inches
@@ -90,7 +109,8 @@ def main():
     for string in range(num_strings):
         num_phones = params.init_string_layout[string]
         first_phone_pos = params.init_string_pos[string]
-        str_color = colors[string]
+        # str_color = colors[string]
+        str_color = params.line_inventory.iloc[string, 1]
 
         ph_dist = np.arange(first_phone_pos, (first_phone_pos + ph_spacing * num_phones), ph_spacing) + \
                   params.line_offset
@@ -114,4 +134,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    json_file = "./refraction.json"
+    main(json_file)

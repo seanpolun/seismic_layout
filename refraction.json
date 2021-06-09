@@ -1,0 +1,13 @@
+{
+  "input_data": [
+    {
+      "shot_spacing": 6.0,
+      "phone_spacing": 2.0,
+      "line_inventory": "./inventory.csv",
+      "annotation_spacing": 10.0,
+      "lead_shots": 2,
+      "line_offset": 162.0
+    }
+  ]
+
+}
