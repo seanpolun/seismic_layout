@@ -3,9 +3,9 @@
     {
       "shot_spacing": 6.0,
       "phone_spacing": 2.0,
-      "line_length": 510,
-      "line_inventory": "./inventory.csv",
-      "first_phone_position": 44.0,
+      "line_length": 460,
+      "line_inventory": "./inventory_MU.csv",
+      "first_phone_position": 48.0,
       "annotation_spacing": 10.0
     }
   ]

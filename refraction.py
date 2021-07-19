@@ -126,6 +126,19 @@ def main(json_input):
         ax.annotate("{:.1f}".format(annot), (dist_x[i], dist_y[i]), textcoords="offset points", xytext=(0, 20),
                     horizontalalignment="center", color="k")
 
+    # Add Text Box
+    shot_text = "Shot Spacing = {:.1f} \n".format(params.shot_spacing)
+    phone_text = "Phone Spacing = {:.1f} \n".format(params.phone_spacing)
+    line_offset_text = "Line Offset = {:.1f} \n".format(params.line_offset)
+    num_lead_shots = "{:.0f} OOS Shots \n".format(params.lead_shots)
+    num_shots_text = "{:.0f} Shots \n".format(params.num_shots)
+    first_shot_pos_txt = "First Shot @ {:.1f} \n".format(min(shot_dist))
+    last_shot_pos_txt= "Last Shot @ {:.1f}".format(max(shot_dist))
+    annot_text = shot_text + phone_text + line_offset_text + num_lead_shots + num_shots_text + first_shot_pos_txt + \
+                 last_shot_pos_txt
+
+    ax.text(0.9, 0.05, annot_text, transform=ax.transAxes, horizontalalignment='right', bbox=dict(facecolor='white',
+                                                                                                  alpha=0.7))
 
     ax.grid()
     ax.set_axisbelow(True)

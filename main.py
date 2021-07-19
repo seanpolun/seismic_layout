@@ -153,6 +153,17 @@ def main(json_input):
                     horizontalalignment="center", color="k")
 
 
+    # Add Text Box
+    shot_text = "Shot Spacing = {:.1f} \n".format(params.shot_spacing)
+    phone_text = "Phone Spacing = {:.1f} \n".format(params.phone_spacing)
+    first_phone_text = "First Phone @ {:.1f} \n".format(params.first_phone_pos)
+    num_rolls_text = "{:.0f} Rolls \n".format(params.num_rolls)
+    num_shots_text = "{:.0f} Shots".format(params.num_shots)
+    annot_text = shot_text + phone_text + first_phone_text + num_rolls_text + num_shots_text
+
+    ax.text(0.9, 0.05, annot_text, transform=ax.transAxes, horizontalalignment='right', bbox=dict(facecolor='white',
+                                                                                                  alpha=0.7))
+
     ax.grid()
     ax.set_axisbelow(True)
     plt.show()
