@@ -44,6 +44,8 @@ class ShootParams():
         self.num_shots = math.floor(self.string_aperture / self.shot_spacing) + (2 * self.lead_shots)
         self.line_length = self.string_aperture + (2 * self.first_phone_pos)
         self.annotation_dist = np.arange(0,self.line_length, self.annotation_spacing) + self.line_offset
+        moveup = self.shot_spacing / self.phone_spacing
+        self.fold = self.total_phone_inv / (2 * moveup)
 
 
 def main(json_input):
@@ -134,8 +136,9 @@ def main(json_input):
     num_shots_text = "{:.0f} Shots \n".format(params.num_shots)
     first_shot_pos_txt = "First Shot @ {:.1f} \n".format(min(shot_dist))
     last_shot_pos_txt= "Last Shot @ {:.1f}".format(max(shot_dist))
+    fold_text = "{:.0f} Fold \n".format(params.fold)
     annot_text = shot_text + phone_text + line_offset_text + num_lead_shots + num_shots_text + first_shot_pos_txt + \
-                 last_shot_pos_txt
+                 last_shot_pos_txt + fold_text
 
     ax.text(0.9, 0.05, annot_text, transform=ax.transAxes, horizontalalignment='right', bbox=dict(facecolor='white',
                                                                                                   alpha=0.7))

@@ -55,6 +55,8 @@ class ShootParams():
         self.annotation_dist = np.arange(0, self.true_length, self.annotation_spacing)
         self.rolled_length = rolled_length
         self.num_shots = math.ceil((rolled_length + self.first_phone_pos) / self.shot_spacing)
+        moveup = self.shot_spacing / self.phone_spacing
+        self.fold = self.total_phone_inv / (2 * moveup)
 
 class GeophoneString():
     def __init__(self, num_phones, init_position, color, rolls, shoot_params):
@@ -159,7 +161,8 @@ def main(json_input):
     first_phone_text = "First Phone @ {:.1f} \n".format(params.first_phone_pos)
     num_rolls_text = "{:.0f} Rolls \n".format(params.num_rolls)
     num_shots_text = "{:.0f} Shots".format(params.num_shots)
-    annot_text = shot_text + phone_text + first_phone_text + num_rolls_text + num_shots_text
+    fold_text = "{:.0f} Fold \n".format(params.fold)
+    annot_text = shot_text + phone_text + first_phone_text + num_rolls_text + num_shots_text + fold_text
 
     ax.text(0.9, 0.05, annot_text, transform=ax.transAxes, horizontalalignment='right', bbox=dict(facecolor='white',
                                                                                                   alpha=0.7))
