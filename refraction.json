@@ -6,7 +6,7 @@
       "line_inventory": "./inventory_MU.csv",
       "annotation_spacing": 10.0,
       "lead_shots": 3,
-      "line_offset": 112
+      "line_offset": 0
     }
   ]
 

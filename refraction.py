@@ -135,8 +135,8 @@ def main(json_input):
     num_lead_shots = "{:.0f} OOS Shots \n".format(params.lead_shots)
     num_shots_text = "{:.0f} Shots \n".format(params.num_shots)
     first_shot_pos_txt = "First Shot @ {:.1f} \n".format(min(shot_dist))
-    last_shot_pos_txt= "Last Shot @ {:.1f}".format(max(shot_dist))
-    fold_text = "{:.0f} Fold \n".format(params.fold)
+    last_shot_pos_txt= "Last Shot @ {:.1f} \n".format(max(shot_dist))
+    fold_text = "{:.0f} Fold".format(params.fold)
     annot_text = shot_text + phone_text + line_offset_text + num_lead_shots + num_shots_text + first_shot_pos_txt + \
                  last_shot_pos_txt + fold_text
 
