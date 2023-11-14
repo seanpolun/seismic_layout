@@ -3,10 +3,12 @@
     {
       "shot_spacing": 6.0,
       "phone_spacing": 2.0,
-      "line_length": 600,
-      "line_inventory": "./inventory_MU.csv",
+      "line_length": 800,
+      "line_inventory": "./inventory.csv",
       "first_phone_position": 48.0,
-      "annotation_spacing": 10.0
+      "annotation_spacing": 10.0,
+      "out_directory": "G:\\Research\\Post Doctoral Research\\grand_river\\shot_plans",
+      "out_plot_name": "reflection_128ch_800m_2m_6m_shots_48m_init_off.pdf"
     }
   ]
 

@@ -6,7 +6,7 @@ import pandas as pd
 import os
 
 
-class ShootParams():
+class ShootParams:
     def __init__(self, input_dict):
         self.shot_spacing = input_dict['shot_spacing']
         self.phone_spacing = input_dict['phone_spacing']
@@ -58,7 +58,8 @@ class ShootParams():
         moveup = self.shot_spacing / self.phone_spacing
         self.fold = self.total_phone_inv / (2 * moveup)
 
-class GeophoneString():
+
+class GeophoneString:
     def __init__(self, num_phones, init_position, color, rolls, shoot_params):
         self.num_phones = num_phones
         self.num_rolls = rolls
@@ -77,6 +78,8 @@ def main(json_input):
     with open(json_input) as in_file:
         input_json = json.load(in_file)
     inputs = input_json['input_data'][0]
+    out_file_name = inputs['out_plot_name']
+    out_dir = inputs['out_directory']
     params = ShootParams(inputs)
     print(params.num_rolls)
     print(params.num_shots)
@@ -169,7 +172,8 @@ def main(json_input):
     ax.grid()
     ax.set_axisbelow(True)
     plt.show()
-    fig.savefig("reflection.pdf")
+    out_path = os.path.join(out_dir, out_file_name)
+    fig.savefig(out_path)
 
 
 if __name__ == '__main__':

@@ -3,8 +3,10 @@ import numpy as np
 import math
 import pandas as pd
 import json
+import os
 
-class ShootParams():
+
+class ShootParams:
     def __init__(self, input_dict):
         # self.shot_spacing = 6
         # self.phone_spacing = 2
@@ -52,6 +54,8 @@ def main(json_input):
     with open(json_input) as in_file:
         input_json = json.load(in_file)
     inputs = input_json['input_data'][0]
+    out_file_name = inputs['out_plot_name']
+    out_dir = inputs['out_directory']
     params = ShootParams(inputs)
     print(params.num_shots)
     page_x = 11 # inches
@@ -95,7 +99,6 @@ def main(json_input):
     # shot_dist_annot = params.annot_line_dist
     shot_x_annot = shot_x[0::shot_annot_subsample]
     shot_y_annot = shot_y[0::shot_annot_subsample]
-
 
     ax.scatter(shot_x, shot_y, c="r", marker="o")
     for i, shot in enumerate(shot_dist_annot):
@@ -146,7 +149,8 @@ def main(json_input):
     ax.grid()
     ax.set_axisbelow(True)
     plt.show()
-    fig.savefig("refraction.pdf")
+    out_path = os.path.join(out_dir, out_file_name)
+    fig.savefig(out_path)
 
 
 if __name__ == '__main__':
