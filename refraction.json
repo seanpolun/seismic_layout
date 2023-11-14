@@ -1,14 +1,14 @@
 {
   "input_data": [
     {
-      "shot_spacing": 6.0,
-      "phone_spacing": 2.0,
-      "line_inventory": "./inventory.csv",
+      "shot_spacing": 12.0,
+      "phone_spacing": 3.0,
+      "line_inventory": "./inventory_MU.csv",
       "annotation_spacing": 10.0,
-      "lead_shots": 4,
+      "lead_shots": 3,
       "line_offset": 0,
       "out_directory": "G:\\Research\\Post Doctoral Research\\grand_river\\shot_plans",
-      "out_plot_name": "fixed_spread_128ch_2m_6m_3lead_0offset.pdf"
+      "out_plot_name": "fixed_spread_56ch_3m_12m_3lead_0offset.pdf"
     }
   ]
 
